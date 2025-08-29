@@ -1,4 +1,38 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-player.Character:BreakJoints()
-player.Character.Humanoid.Health = 0
+-- Максимально простой рабочий скрипт
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local image = Instance.new("ImageLabel")
+image.Image = "rbxassetid://13645009326"
+image.Size = UDim2.new(0, 300, 0, 300)
+image.Position = UDim2.new(0.5, -150, 0.5, -150)
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui")
+
+local image = Instance.new("ImageLabel")
+image.Image = "rbxassetid://71277065"
+image.Size = UDim2.new(0, 300, 0, 300)
+image.Position = UDim2.new(0.5, 150, 0.5, -150)
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui")
+
+local image = Instance.new("ImageLabel")
+image.Image = "rbxassetid://11884046842"
+image.Size = UDim2.new(0, 300, 0, 300)
+image.Position = UDim2.new(0.5, -500, 0.5, -150)
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui")
+
+local text = Instance.new("TextLabel")
+text.Size = UDim2.new(0, 1000, 0, 500)
+text.Position = UDim2.new(0.5, -150, 0.5, -50)
+text.AnchorPoint = Vector2.new(0.5, 0.5)
+text.Text = "ДЕНИСКА ПИСЬКА"
+text.TextColor3 = Color3.new(1, 1, 1)
+text.BackgroundColor3 = Color3.new(0, 0, 0)
+text.BackgroundTransparency = 0.5
+text.TextScaled = false
+text.TextSize = 5000
+text.Font = Enum.Font.SourceSansBold
+text.Parent = gui
