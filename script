@@ -17,6 +17,8 @@ image.Size = UDim2.new(4, 0, 1, 0)
 image.Position = UDim2.new(-1.5, 0, 0, 0)
 image.Parent = game.workspace.Map.StealsBoard.Main.SurfaceGui
 game.workspace.Map.Ground.Material = "CrackedLava"
+game.workspace.Map.Carpet.Material = "Marble"
+game.workspace.Map.Carpet.Color = Color3.new(0,0,0)
 local part = game.workspace.Map.Ground -- Блок, к которому прикреплен скрипт
 local runService = game:GetService("RunService")
 
