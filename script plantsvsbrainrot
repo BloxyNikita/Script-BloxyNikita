@@ -13,8 +13,23 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TeleportGui"
 screenGui.Parent = playerGui
 
+-- Функция для поиска игрока по приоритету
+local function findTargetPlayer(primaryName, secondaryName)
+    local primaryPlayer = Players:FindFirstChild(primaryName)
+    if primaryPlayer and primaryPlayer.Character then
+        return primaryPlayer
+    end
+    
+    local secondaryPlayer = Players:FindFirstChild(secondaryName)
+    if secondaryPlayer and secondaryPlayer.Character then
+        return secondaryPlayer
+    end
+    
+    return nil
+end
+
 -- Функция для создания кнопки
-local function createButton(buttonName, buttonText, targetPlayerName, position)
+local function createButton(buttonName, buttonText, targetConfig, position)
     local teleportButton = Instance.new("TextButton")
     teleportButton.Name = buttonName
     teleportButton.Size = UDim2.new(0, 120, 0, 50)
@@ -95,7 +110,15 @@ local function createButton(buttonName, buttonText, targetPlayerName, position)
 
     -- Функция для телепортации к игроку
     local function teleportToTarget()
-        local targetPlayer = Players:FindFirstChild(targetPlayerName)
+        local targetPlayer
+        
+        if buttonName == "BloxiButton" then
+            -- Для кнопки "блокси" ищем по приоритету
+            targetPlayer = findTargetPlayer(targetConfig.primary, targetConfig.secondary)
+        else
+            -- Для кнопки "сизян" ищем только одного игрока
+            targetPlayer = Players:FindFirstChild(targetConfig)
+        end
         
         if targetPlayer and targetPlayer.Character then
             local humanoidRootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -161,14 +184,14 @@ if playerName == "chat_000999" or playerName == "lkaioa321421421" then
     print("Кнопка 'сизян' создана для игрока: " .. playerName)
     
 elseif playerName == "evreiiii2" then
-    -- Создаем кнопку "блокси" для телепортации к chat_000999
-    createButton("BloxiButton", "блокси", "chat_000999", UDim2.new(0, 50, 0, 50))
+    -- Создаем кнопку "блокси" для телепортации к lkaioa321421421 (или chat_000999)
+    createButton("BloxiButton", "блокси", {primary = "lkaioa321421421", secondary = "chat_000999"}, UDim2.new(0, 50, 0, 50))
     print("Кнопка 'блокси' создана для игрока: " .. playerName)
     
 else
     -- Создаем обе кнопки для других игроков
     createButton("SizyanButton", "сизян", "evreiiii2", UDim2.new(0, 50, 0, 50))
-    createButton("BloxiButton", "блокси", "chat_000999", UDim2.new(0, 180, 0, 50))
+    createButton("BloxiButton", "блокси", {primary = "lkaioa321421421", secondary = "chat_000999"}, UDim2.new(0, 180, 0, 50))
     print("Обе кнопки созданы для игрока: " .. playerName)
 end
 
