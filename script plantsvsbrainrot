@@ -20,7 +20,7 @@ teleportButton.Size = UDim2.new(0, 150, 0, 50)
 teleportButton.Position = UDim2.new(0, 50, 0, 50)
 teleportButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-teleportButton.Text = "с изъяном"
+teleportButton.Text = "сизян"
 teleportButton.TextScaled = true
 teleportButton.Font = Enum.Font.GothamBold
 teleportButton.BorderSizePixel = 2
@@ -129,7 +129,7 @@ local function teleportToPlayer()
         else
             teleportButton.Text = "Игрок не найден"
             wait(1)
-            teleportButton.Text = "с изъяном"
+            teleportButton.Text = "сизян"
         end
     else
         teleportButton.Text = "Игрок не найден"
