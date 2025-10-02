@@ -1,0 +1,149 @@
+-- LocalScript в StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Создаем ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = playerGui
+
+-- Создаем основную кнопку
+local teleportButton = Instance.new("TextButton")
+teleportButton.Name = "TeleportButton"
+teleportButton.Size = UDim2.new(0, 150, 0, 50)
+teleportButton.Position = UDim2.new(0, 50, 0, 50)
+teleportButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.Text = "с изъяном"
+teleportButton.TextScaled = true
+teleportButton.Font = Enum.Font.GothamBold
+teleportButton.BorderSizePixel = 2
+teleportButton.BorderColor3 = Color3.fromRGB(100, 100, 100)
+teleportButton.Parent = screenGui
+
+-- Добавляем скругление углов
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = teleportButton
+
+-- Добавляем тень/эффект глубины
+local shadow = Instance.new("UIStroke")
+shadow.Color = Color3.fromRGB(0, 0, 0)
+shadow.Thickness = 2
+shadow.Parent = teleportButton
+
+-- Переменные для перемещения кнопки
+local isDragging = false
+local dragStart
+local buttonStartPosition
+
+-- Функция для перемещения кнопки
+local function startDrag(input)
+    isDragging = true
+    dragStart = input.Position
+    buttonStartPosition = teleportButton.Position
+    
+    -- Эффект при захвате
+    teleportButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end
+
+local function endDrag(input)
+    isDragging = false
+    
+    -- Возвращаем нормальный цвет
+    teleportButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+end
+
+local function updateDrag(input)
+    if isDragging then
+        local delta = input.Position - dragStart
+        local newPosition = UDim2.new(
+            buttonStartPosition.X.Scale,
+            buttonStartPosition.X.Offset + delta.X,
+            buttonStartPosition.Y.Scale,
+            buttonStartPosition.Y.Offset + delta.Y
+        )
+        teleportButton.Position = newPosition
+    end
+end
+
+-- Подключаем обработчики для перемещения
+teleportButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        startDrag(input)
+    end
+end)
+
+teleportButton.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        endDrag(input)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input)
+    end
+end)
+
+-- Функция для телепортации к игроку
+local function teleportToPlayer()
+    local targetPlayer = Players:FindFirstChild("evreiiii2")
+    
+    if targetPlayer and targetPlayer.Character then
+        local humanoidRootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local targetCharacter = player.Character
+        
+        if humanoidRootPart and targetCharacter then
+            local targetHRP = targetCharacter:FindFirstChild("HumanoidRootPart")
+            
+            if targetHRP then
+                -- Телепортируем персонажа
+                targetHRP.CFrame = humanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                
+                -- Визуальная обратная связь
+                teleportButton.Text = "Телепортация!"
+                teleportButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+                
+                -- Анимация кнопки
+                local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                local tween = TweenService:Create(teleportButton, tweenInfo, {Size = UDim2.new(0, 160, 0, 55)})
+                tween:Play()
+                
+                wait(0.5)
+                
+                -- Возвращаем кнопку в исходное состояние
+                teleportButton.Text = "сизян"
+                teleportButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                local tweenBack = TweenService:Create(teleportButton, tweenInfo, {Size = UDim2.new(0, 150, 0, 50)})
+                tweenBack:Play()
+            else
+                warn("У вашего персонажа нет HumanoidRootPart")
+            end
+        else
+            teleportButton.Text = "Игрок не найден"
+            wait(1)
+            teleportButton.Text = "с изъяном"
+        end
+    else
+        teleportButton.Text = "Игрок не найден"
+        wait(1)
+        teleportButton.Text = "сизян"
+    end
+end
+
+-- Обработчик нажатия на кнопку
+teleportButton.MouseButton1Click:Connect(function()
+    teleportToPlayer()
+end)
+
+-- Также обрабатываем Touch события для мобильных устройств
+teleportButton.TouchTap:Connect(function()
+    teleportToPlayer()
+end)
