@@ -196,3 +196,249 @@ else
 end
 
 print("Система телепортаций загружена!")
+
+
+
+
+
+
+
+-- LocalScript в StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Переменные
+local defaultWalkSpeed = 26
+local currentWalkSpeed = defaultWalkSpeed
+
+-- Основной контейнер (компактный)
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 200, 0, 150)  -- Уменьшенный размер
+mainFrame.Position = UDim2.new(0, 848, 0, 84)  -- Обновленная позиция
+mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- Скругление углов
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
+
+-- Тень
+local shadow = Instance.new("UIStroke")
+shadow.Color = Color3.fromRGB(20, 20, 20)
+shadow.Thickness = 1
+shadow.Parent = mainFrame
+
+-- Заголовок (компактный)
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, 0, 0, 25)  -- Уменьшенная высота
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.Text = "Скорость"
+title.TextScaled = true
+title.Font = Enum.Font.GothamMedium
+title.Parent = mainFrame
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = title
+
+-- Поле ввода скорости (компактное)
+local speedInput = Instance.new("TextBox")
+speedInput.Name = "SpeedInput"
+speedInput.Size = UDim2.new(0.9, 0, 0, 30)  -- Уменьшенная высота
+speedInput.Position = UDim2.new(0.05, 0, 0.2, 0)
+speedInput.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+speedInput.TextColor3 = Color3.fromRGB(220, 220, 220)
+speedInput.PlaceholderText = "Число"
+speedInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+speedInput.Text = ""
+speedInput.TextScaled = true
+speedInput.Font = Enum.Font.Gotham
+speedInput.Parent = mainFrame
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 6)
+inputCorner.Parent = speedInput
+
+-- Кнопка установки скорости (серая)
+local setSpeedButton = Instance.new("TextButton")
+setSpeedButton.Name = "SetSpeedButton"
+setSpeedButton.Size = UDim2.new(0.9, 0, 0, 30)  -- Уменьшенная высота
+setSpeedButton.Position = UDim2.new(0.05, 0, 0.45, 0)
+setSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)  -- Серый цвет
+setSpeedButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+setSpeedButton.Text = "Установить"
+setSpeedButton.TextScaled = true
+setSpeedButton.Font = Enum.Font.GothamMedium
+setSpeedButton.Parent = mainFrame
+
+local setButtonCorner = Instance.new("UICorner")
+setButtonCorner.CornerRadius = UDim.new(0, 6)
+setButtonCorner.Parent = setSpeedButton
+
+-- Кнопка обычной скорости (серая)
+local normalSpeedButton = Instance.new("TextButton")
+normalSpeedButton.Name = "NormalSpeedButton"
+normalSpeedButton.Size = UDim2.new(0.9, 0, 0, 30)  -- Уменьшенная высота
+normalSpeedButton.Position = UDim2.new(0.05, 0, 0.7, 0)
+normalSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)  -- Серый цвет
+normalSpeedButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+normalSpeedButton.Text = "Обычная (26)"
+normalSpeedButton.TextScaled = true
+normalSpeedButton.Font = Enum.Font.GothamMedium
+normalSpeedButton.Parent = mainFrame
+
+local normalButtonCorner = Instance.new("UICorner")
+normalButtonCorner.CornerRadius = UDim.new(0, 6)
+normalButtonCorner.Parent = normalSpeedButton
+
+-- Функция для установки скорости
+local function setWalkSpeed(speed)
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = speed
+            currentWalkSpeed = speed
+            return true
+        end
+    end
+    return false
+end
+
+-- Функция для анимации кнопки
+local function animateButton(button)
+    local originalSize = button.Size
+    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(button, tweenInfo, {Size = originalSize + UDim2.new(0, 3, 0, 3)})
+    local tweenBack = TweenService:Create(button, tweenInfo, {Size = originalSize})
+    
+    tween:Play()
+    tween.Completed:Connect(function()
+        tweenBack:Play()
+    end)
+end
+
+-- Обработчик кнопки установки скорости
+setSpeedButton.MouseButton1Click:Connect(function()
+    animateButton(setSpeedButton)
+    
+    local speedText = speedInput.Text
+    local speed = tonumber(speedText)
+    
+    if speed then
+        if speed >= 0 and speed <= 500 then
+            if setWalkSpeed(speed) then
+                setSpeedButton.Text = "Успех!"
+                setSpeedButton.BackgroundColor3 = Color3.fromRGB(60, 100, 60)
+                
+                wait(1.5)
+                setSpeedButton.Text = "Установить"
+                setSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            else
+                setSpeedButton.Text = "Ошибка"
+                setSpeedButton.BackgroundColor3 = Color3.fromRGB(100, 60, 60)
+                wait(1.5)
+                setSpeedButton.Text = "Установить"
+                setSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            end
+        else
+            setSpeedButton.Text = "0-500!"
+            setSpeedButton.BackgroundColor3 = Color3.fromRGB(100, 80, 60)
+            wait(1.5)
+            setSpeedButton.Text = "Установить"
+            setSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        end
+    else
+        setSpeedButton.Text = "Число!"
+        setSpeedButton.BackgroundColor3 = Color3.fromRGB(100, 60, 60)
+        wait(1.5)
+        setSpeedButton.Text = "Установить"
+        setSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end
+end)
+
+-- Обработчик кнопки обычной скорости
+normalSpeedButton.MouseButton1Click:Connect(function()
+    animateButton(normalSpeedButton)
+    
+    if setWalkSpeed(defaultWalkSpeed) then
+        normalSpeedButton.Text = "26"
+        normalSpeedButton.BackgroundColor3 = Color3.fromRGB(60, 100, 60)
+        
+        wait(1.5)
+        normalSpeedButton.Text = "Обычная (26)"
+        normalSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    else
+        normalSpeedButton.Text = "Ошибка"
+        normalSpeedButton.BackgroundColor3 = Color3.fromRGB(100, 60, 60)
+        wait(1.5)
+        normalSpeedButton.Text = "Обычная (26)"
+        normalSpeedButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end
+end)
+
+-- Функция для перемещения окна
+local isDragging = false
+local dragStart
+local frameStartPosition
+
+local function startDrag(input)
+    isDragging = true
+    dragStart = input.Position
+    frameStartPosition = mainFrame.Position
+end
+
+local function endDrag(input)
+    isDragging = false
+end
+
+local function updateDrag(input)
+    if isDragging then
+        local delta = input.Position - dragStart
+        local newPosition = UDim2.new(
+            frameStartPosition.X.Scale,
+            frameStartPosition.X.Offset + delta.X,
+            frameStartPosition.Y.Scale,
+            frameStartPosition.Y.Offset + delta.Y
+        )
+        mainFrame.Position = newPosition
+    end
+end
+
+-- Подключаем обработчики для перемещения
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        startDrag(input)
+    end
+end)
+
+title.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        endDrag(input)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        updateDrag(input)
+    end
+end)
+
+-- Автоматически устанавливаем стандартную скорость при появлении персонажа
+player.CharacterAdded:Connect(function(character)
+    wait(1)
+    setWalkSpeed(currentWalkSpeed)
+end)
+
+print("Компактный контроль скорости загружен! Позиция: {848, 84}")
