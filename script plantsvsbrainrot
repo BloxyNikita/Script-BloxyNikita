@@ -34,11 +34,11 @@ local function createButton(buttonName, buttonText, targetConfig, position)
     teleportButton.Name = buttonName
     teleportButton.Size = UDim2.new(0, 120, 0, 50)
     teleportButton.Position = UDim2.new(0, 900, 0, 26)
-    teleportButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    teleportButton.TextColor3 = Color3.fromRGB(220, 220, 220)
     teleportButton.Text = buttonText
     teleportButton.TextScaled = true
-    teleportButton.Font = Enum.Font.GothamBold
+    teleportButton.Font = Enum.Font.GothamMedium
     teleportButton.BorderSizePixel = 2
     teleportButton.BorderColor3 = Color3.fromRGB(100, 100, 100)
     teleportButton.Parent = screenGui
